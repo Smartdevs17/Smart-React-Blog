@@ -1,5 +1,6 @@
 import "./settings.css"
 import Sidebar from "../../sidebar/Sidebar"
+import profileImg from "../../assets/img/My-pic.jpg";
 
 function Settings() {
     return (
@@ -12,7 +13,7 @@ function Settings() {
                 <form  className="settingsForm">
                     <label >Profile Picture</label>
                     <div className="settingsPP">
-                        <img src="./img/My-pic.jpg" alt="" />
+                        <img src={profileImg} alt="" />
                         <label htmlFor="fileInput">
                         <i className="settingsPPIcon far fa-user-circle"></i>
                         </label>

@@ -7,10 +7,12 @@ import Write from "./components/pages/write/Write";
 import Settings from "./components/pages/settings/Settings";
 import Login from "./components/pages/login/Login";
 import Registration from "./components/pages/registration/Registration";
+import { useContext } from "react";
+import { Context } from "./context/Context";
 
 
 function App() {
-  const user = false;
+  const {user} = useContext(Context);
 
   return (
     <Router >

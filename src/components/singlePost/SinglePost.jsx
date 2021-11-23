@@ -1,25 +1,67 @@
-import React from 'react'
+import React,{useEffect,useState,useContext} from 'react'
 import "./singlePost.css";
-
+// import singlePostImg from "../assets/img/singlePostImg.jpg";
+import { useLocation } from "react-router"
+import axios from "axios";
+import {Link} from "react-router-dom";
+import {Context} from "../../context/Context";
 
 function SinglePost() {
+    const loc = useLocation();
+    const path = loc.pathname.split("/")[2];
+    const [post,setPost] = useState([]);
+    const {user} = useContext(Context);
+    const [title,setTitle] = useState("");
+    const [desc,setDesc] = useState("");
+    const [updateMode,setUpdateMode] = useState(false);
+
+
+
+    useEffect(() => {
+      const getPost = async () => {
+          const res = await axios.get("http://localhost:5000/api/posts/" + path)
+                setPost(res.data)
+        };
+      getPost()
+    }, [path])
+        const PF = "http://localhost:5000/images/";
+
+        const handleDelete = async () => {
+                        try {
+                            await axios.delete("http://localhost:5000/api/posts/"+ path ,{
+                                data: {username: user.username} } );
+                            window.location.replace("/");
+                        } catch (error) {
+                            console.log(error)
+                        }
+        }
     return (
+
         <div className="singlePost">
             <div className="singlePostWrapper">
-                <img src="./img/singlePostImg.jpg" alt="" className="singlePostImg" />
+                {post.photo && (
+                        <img src={PF + post.photo} alt="" className="singlePostImg"/>
+                )}
                 <h1 className="singlePostTitle">
-                    Lorem ipsum dolor sit amet.
+                    {post.title}
+                    {post.username === user?.username && 
                     <div className="singlePostEdit">
-                        <i className="singlePostIcon far fa-edit"></i>
-                        <i className="singlePostIcon far fa-trash-alt"></i>
+                        <i className="singlePostIcon far fa-edit" onClick={() => setUpdateMode(true)} ></i>
+                        <i className="singlePostIcon far fa-trash-alt" onClick={handleDelete} ></i>
                     </div>
+                    }
+                    
                 </h1>
                 <div className="singlePostInfo">
-                    <span className="singlePostAuthor">Author: <b>Smart Developer</b></span>
-                    <span className="singlePostDate">1 hour ago</span>
+                    <span className="singlePostAuthor">Author: 
+                    <Link className="link" to={`/?user=${post.username}`} > 
+                            <b>{post.username}</b>
+                    </Link>
+                    </ span>
+                    <span className="singlePostDate"> {new Date(post.createdAt).toDateString()} </span>
                 </div>
                 <p className="singlePostDesc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci sed molestias fuga quia dolorem. Eius libero id molestiae in nesciunt fugiat quia nisi voluptatibus sequi ipsum, repellendus assumenda expedita placeat accusamus tenetur consequatur distinctio fugit, corporis, aperiam incidunt ab sapiente unde dolor. Fugit eveniet repellendus dignissimos enim magnam deserunt nesciunt dolorum, a animi quibusdam soluta commodi officiis pariatur corrupti omnis aliquid, ea provident assumenda libero quisquam, odio sed? Quas rerum, hic quos facilis eligendi nulla officia minima amet odio aspernatur nesciunt porro commodi recusandae doloremque in autem, inventore iste voluptatibus magni. Eligendi aut distinctio at ab fugit, necessitatibus impedit iure iste voluptate rerum molestias harum saepe sed omnis eum. Possimus dignissimos maxime mollitia quis, nesciunt sequi laborum voluptatibus alias modi, eos porro ad blanditiis. Dolorem vero quia quod atque delectus reiciendis tempora minus neque magni quo, necessitatibus rerum, itaque sint labore quis culpa voluptatem. Mollitia aspernatur qui ipsa, odio optio, iure possimus veniam ullam rem harum magnam asperiores id accusamus minus nesciunt, vel reiciendis velit adipisci quidem repellat facere amet laudantium! Cumque fuga magnam dolores vero delectus quasi repellendus id soluta perferendis ipsa vel architecto aspernatur minus, velit porro esse! Laudantium ipsum ut reprehenderit, veniam assumenda incidunt necessitatibus quis debitis accusamus quaerat ullam, itaque quidem repudiandae corporis totam nihil minus, recusandae ipsa architecto doloribus cupiditate error vero enim fugit! Quidem veritatis natus labore quaerat. Asperiores voluptas quos delectus neque nesciunt! Neque obcaecati voluptatum consequuntur praesentium saepe cumque odit temporibus vel voluptatem ipsam consectetur ex ipsum aliquid reiciendis dolorum, dolore itaque.
+                    {post.desc}
                 </p>
             </div>
         </div>
